@@ -2,9 +2,102 @@
 <html>
 <head>
   <title>My Diary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .day {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      padding: 15px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .day:hover {
+      background: #e3f2fd;
+    }
+    #entry-box {
+      margin-top: 20px;
+      display: none;
+    }
+    textarea {
+      width: 80%;
+      height: 100px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
-<body>
-  <h1>Welcome to My Diary</h1>
-  <p>This is my personal website hosted on GitHub Pages.</p>
+<body onload="checkPassword()">
+
+  <h1>📖 My Private Diary</h1>
+
+  <div id="calendar" class="calendar" style="display: none;"></div>
+
+  <div id="entry-box">
+    <h2 id="selected-date"></h2>
+    <textarea id="entry" placeholder="Write your diary entry..."></textarea><br>
+    <button onclick="saveEntry()">Save Entry</button>
+  </div>
+
+  <script>
+    const correctPassword = "mysecret123";
+
+    function checkPassword() {
+      const entered = prompt("Enter your diary password:");
+      if (entered === correctPassword) {
+        document.getElementById("calendar").style.display = "grid";
+        createCalendar();
+      } else {
+        alert("Wrong password!");
+        location.reload();
+      }
+    }
+
+    function createCalendar() {
+      const calendar = document.getElementById("calendar");
+      for (let i = 1; i <= 30; i++) {
+        const day = document.createElement("div");
+        day.className = "day";
+        day.textContent = `Day ${i}`;
+        day.onclick = () => openEntry(i);
+        calendar.appendChild(day);
+      }
+    }
+
+    function openEntry(day) {
+      const entryBox = document.getElementById("entry-box");
+      const selectedDate = document.getElementById("selected-date");
+      const entryField = document.getElementById("entry");
+      const key = `diary-entry-${day}`;
+      selectedDate.textContent = `Entry for Day ${day}`;
+      entryField.value = localStorage.getItem(key) || "";
+      entryBox.style.display = "block";
+    }
+
+    function saveEntry() {
+      const selectedDate = document.getElementById("selected-date").textContent;
+      const day = selectedDate.match(/\d+/)[0];
+      const entryText = document.getElementById("entry").value;
+      localStorage.setItem(`diary-entry-${day}`, entryText);
+      alert("Entry saved!");
+    }
+  </script>
+
 </body>
 </html>
